@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TestPage</title>
+    <style>
+        /* div {
+            text-align: center;
+        } */
+    </style>
+</head>
+<body>
+
+<!-- 1 对应app_print 传入数据在标签内-->
+<div id = "app">
+    <h1>{{ msg }}</h1>
+
+<!-- 4 v-on: = @ 事件注册-->
+    <p>
+        <button @click="count -= 100">-</button>
+        <span>{{ count+100 }}</span>
+        <button @click="count += 100">+</button>
+    </p>
+
+    <h2>{{nickname.toUpperCase()}}</h2>
+    <p>{{age >= 18 ? '成年':'未成年'}}</p>
+    <h2>{{friend.name}}</h2>
+    <p>{{friend.msg}}</p>
+</div>
+
+<!--
+ 2 script app_vhtml v-html将data对应内容直接传入HTML文件中显示 
+ -->
+<div id = "app2">
+    <div v-html="msg"></div>  
+</div>
+
+<!-- 3 script app_vshowif -->
+<div id="app3">
+    <div v-if="true">你好你好</div>
+    <div v-show="false">不好</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+
+<!-- 5 script app_von -->>
+<div id="app4">
+    <button @click="sh">开启/关闭</button>
+    <h1 v-show="isshow">-------展示------</h1>
+</div>
+
+<!-- 6 script app_voncs -->
+<div id="app5">
+    <h1>回合开始</h1>
+    <div>
+        <h2>A 血量 {{Ablood}}</h2>
+        <h2>B 血量 {{Bblood}}</h2>
+    </div>
+    <button @click="ata(5)">A攻击-5</button>
+    <button @click="atb(10)">B攻击-10</button>
+</div>
+
+<!-- 7 script app_vbind -->>
+ <div id="app6">
+    <div>
+        <img v-bind:src="imgurl" :alt="msg" :title="img1" v-show="isshow">
+    </div>
+    <button @click="simg()">打开/关闭图片</button>
+</div>
+<!-- 8 script app_imgshow -->
+<div id="app7">
+    <div>
+        <button v-show="index > 0" @click="cut()">上一页</button>
+        <img :src="list[index]" alt="无图片">
+        <button v-show="index < list.length -1" @click="add()">下一页</button>
+    </div>
+</div>
+<!-- 9 script app_vfor -->
+<div id="app8">
+    <h1>fundation member list</h1>
+    <ul>
+        <li v-for="(name,index) in list">
+            {{ name }} ------------------------------{{ index }}
+        </li>
+    </ul>
+</div>
+<!-- 10 script app_forshow -->
+<div id="app9">
+    <h1 text-align:center> list </h1>
+    <ul>
+        <li v-for="(item,index) in memberList">
+            {{ index }}    {{ item.name }} + {{ item.position }}
+        </li>
+    </ul>
+</div>
+<!-- 11 script app_model-->
+<div id="app10">
+    <h1> list </h1>
+    <ul>
+        <li>
+            用户名:<input type="text" v-model="username">  
+        </li>
+        <li>
+            密码：<input type="password" v-model="password">
+        </li>
+        <li>
+            <button @click="login" class="clear-completed">登录</button>     <button @click="reset">重置</button>
+        </li>
+    </ul>
+</div>
+<!-- app 1 -->
+<script>
+    const app_print = new Vue({
+    el:'#app',
+    data:{
+    msg : 'Hello World',
+    count : 666,
+    nickname : 'echo',
+    age : 18,
+    friend : {
+        name : 'ming',
+        msg : 'dmndmddm',
+    }
+    }
+    })
+</script>
+<!-- app 2 -->
+<script>
+    const app_vhtml = new Vue({
+        el:'#app2',
+        data:{
+            msg:'<a href="http://127.0.0.1:5500/hello.html">这是什么</a>'
+        }
+    })
+</script>
+<!-- app 3 -->
+<script>
+    const app_vshowif = new Vue({
+        el:'#app3',
+        data:{
+            true:true,
+            false:false,
+
+        }
+    })
+</script>
+<!-- app 4 -->
+<script>
+    const app_von = new Vue({
+        el:"#app4",
+        data:{
+            isshow:true,
+        },
+        methods:{
+            sh () {
+                // console.log('展示已改变',app4.isshow)
+                this.isshow =! this.isshow
+            }
+        }
+    })
+</script>
+<!-- app 5 -->
+<script>
+    const app_attack = new Vue({
+        el:'#app5',
+        data:{
+            Ablood : 200,
+            Bblood : 100,
+        },
+        methods:{
+            ata(atkA){
+                this.Bblood -= atkA
+            },
+            atb(atkB){
+                this.Ablood -= atkB
+            }
+        }
+    })
+</script>
+<!-- app 6 -->
+<script>
+    const app_vbind = new Vue({
+        el:"#app6",
+        data:{
+            imgurl:'233.png',
+            msg:'unconnected',
+            img1:'unknown',
+            isshow:true,                     //v-show变量无需引号
+        },
+        methods:{
+            simg(){
+                this.isshow =! this.isshow   //必须用this.xxx或app_vbind.xxx指代当前方法内的变量
+            }
+        }
+    })
+</script>
+<!-- app 7 -->
+<script>
+    const app_imgshow = new Vue({
+        el:"#app7",
+        data:{
+            index:0,
+            list:[
+                '4271.jpg',
+                '4272.jpg',
+                '4273.jpg'
+            ]
+        },
+        methods:{
+            cut(){
+                this.index--
+            },
+            add(){
+                this.index++
+            }
+        }
+    })
+</script>
+<!-- app 8 -->
+<script>
+    const app_vfor = new Vue({
+        el:'#app8',
+        data:{
+            list:[
+                "sonetto",
+                "regulus",
+                "Liliya"
+            ]
+        }
+    })
+</script>
+<!-- app 9 -->
+<script>
+    const app_vforshow = new Vue({
+        el:'#app9',
+        data:{
+            memberList:[
+                { id: 1,name:'Ada',position:'leader'},
+                { id: 2,name:'Bdb',position:'archer'},
+                { id: 3,name:'Cdc',position:'lancer'},
+                { id: 4,name:'Ddd',position:'docker'},
+                { id: 5,name:'Eda',position:'user'}
+            ]
+        }
+    })
+</script>
+<!-- app 10 -->
+<script>
+    const app = new Vue({
+        el:'#app10',
+    data:{
+        username:'',
+        password:''
+    },
+    methods:{
+        login(){
+            console.log(this.username,this.password)
+            this.username = '',
+            this.password = ''
+        },
+        reset(){
+            this.username = '',
+            this.password = ''
+        }
+    }
+    })
+</script>
+</body>
+</html>
