@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
 <section id="app">
     <header>
         <h1 class="text-center">记事本</h1>
@@ -16,7 +16,7 @@
                 <div class="col"></div>
                 <div class="col-6">
                     <div class="input-group">
-                        <input type="text"  v-model= "todoin"  class="form-control" placeholder="请输入" aria-describedby="button-addon4" >
+                        <input type="text" @keyup.enter="add" v-model= "todoin"  class="form-control" placeholder="请输入" aria-describedby="button-addon4"> <!-- @keyup.enter 逻辑为传入对象e.key==="enter" 也可以<script>中编写methods使用函数判断实现同样功能 -->
                         <div class="input-group-append" id="button-addon4">
                             <button class="btn btn-outline-primary" type="button" @click="add">添加任务</button>
                         </div>
@@ -45,7 +45,7 @@
                                     </button>
                                     </span>
                                 </div>
-                    </li>   
+                    </li>
                 </ul>
                    <!-- 页脚标签 --> 
                 <footer v-show="list.length > 0">
