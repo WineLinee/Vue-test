@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <!-- 必需的 meta 标签 -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap 的 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <div id="app" style="padding: 1%;">
+    <table class="table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">编号</th>
+          <th scope="col">科目</th>
+          <th scope="col">分数</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item,index) in list" :key="item.id">
+          <th scope="row">{{ index+1 }}</th>
+          <td>{{item.subject}}</td>
+          <td>{{item.score}}</td>
+          <td><a href="#">删除</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="table table-dark"><tr><th>总分：{{scoreSum}}</th><th>平均分：{{scoreSum/list.length}}</th>   </tr></table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data:{
+                list:[
+                    {id:1,subject:'数学',score:69},
+                    {id:2,subject:'语文',score:87},
+                    {id:3,subject:'英语',score:68},
+                    {id:4,subject:'历史',score:56},
+                    {id:5,subject:'政治',score:96},
+                ],
+                subject:'',
+                score:'',
+            },
+            computed:{
+                scoreSum(){
+                    let total = this.list.reduce((sum,item) => sum + item.score,0)
+                    return total
+                },
+                // scoreAve(){
+                //     let Ave = this.total / list.length
+                //     return Ave
+            }
+        })
+    </script>
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-7ymO4nGrkm372HoSbq1OY2DP4pEZnMiA+E0F3zPr+JQQtQ82gQ1HPY3QIVtztVua" crossorigin="anonymous"></script>
+  </body>
+</html>
