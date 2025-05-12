@@ -12,3 +12,5 @@
 > https://icons.bootcss.com/icons/slash-square/
 
 bs4 js目前没有使用到，后续可能添加
+
+已添加bs4 js引入
