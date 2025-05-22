@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <figure class="figure">
+        <img src="/handler7.png" class="figure-img img-fluid rounded" alt="...">
+    </figure>
+    <div id="app">
+    <table class="table table-default">
+      <thead>
+        <tr>
+          <th scope="col">状态</th>
+          <th scope="col">图片</th>
+          <th scope="col">单价</th>
+          <th scope="col">个数</th>
+          <th scope="col">小计</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item,index) in fruitList" :key="item.id">
+          <th>
+            <div class="input-group-text">
+              <input type="checkbox" v-model="item.isChecked" aria-label="Checkbox for following text input">
+            </div>
+          <td><img :src="item.icon" class="img-fluid"></td>
+          <td>{{item.price}}</td>
+          <td><button @click="sub(item.id)">-</button>{{item.num}}<button @click="add(item.id)">+</button></td>
+          <td>{{item.price * item.num}}</td>
+          <td><a @click.prevent="del(item.id)" href="#">删除</a></td>
+        </tr>
+
+
+        <tr>
+          <th>
+            <div class="input-group-text">
+              <input type="checkbox" v-model="isAll" aria-label="Checkbox for following text input">全选
+            </div>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>总价：￥ {{ totalPrice }}</td>
+          <td><button  class="btn btn-primary">结算<span class="badge badge-secondary">{{ totalCount }}</span></button></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+    <script>
+      const defaultlist = [{
+            id: 1,
+            icon:"/xgboost.png",
+            isChecked:true,
+            num: 2,
+            price: 6,
+          },
+          {
+            id: 2,
+            icon:"/pytorch.png",
+            isChecked:true,
+            num: 3,
+            price: 6,
+          },
+          {
+            id: 3,
+            icon:"/th.jpg",
+            isChecked:false,
+            num: 5,
+            price: 2,
+          },
+          {
+            id: 4,
+            icon:"/4271.jpg",
+            isChecked:false,
+            num: 8,
+            price: 9,
+          },
+        ]
+      const app = new Vue({
+        el:"#app",
+        data:{
+          fruitList:JSON.parse(localStorage.getItem("list")) || defaultlist
+        },
+        computed:{
+          isAll:{
+            get(){
+              return this.fruitList.every(item => item.isChecked)
+            },
+            set(value){
+              return this.fruitList.forEach(item => item.isChecked = value)
+            }
+          },
+          totalCount(){
+            return this.fruitList.reduce((sum,item) =>{
+              if(item.isChecked){
+                return sum + item.num
+              }
+              else{
+                return sum
+              }
+            },0)
+          },
+          totalPrice(){
+            return this.fruitList.reduce((sum,item) =>{
+              if(item.isChecked){
+                return sum + item.num * item.price
+              }
+              else{
+                return sum
+              }
+            },0)
+          }
+        },
+        methods:{
+          del(id){
+            console.log("已删除")
+            this.fruitList = this.fruitList.filter(item => item.id !== id)
+          },
+          add(id){
+            const fruit = this.fruitList.find(item => item.id === id)
+            fruit.num++
+          },
+          sub(id){
+            const fruit = this.fruitList.find(item => item.id === id)
+            fruit.num--
+          },
+        },
+        watch:{
+          fruitList:{
+            deep:true,
+            handler(newValue){
+              localStorage.setItem('list',JSON.stringify(newValue))
+            }
+          }
+        }
+      })
+
+    </script>
+
+
+
+
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-7ymO4nGrkm372HoSbq1OY2DP4pEZnMiA+E0F3zPr+JQQtQ82gQ1HPY3QIVtztVua" crossorigin="anonymous"></script>
+  </body>
+</html>
