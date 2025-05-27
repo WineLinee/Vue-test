@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <!-- 必须的 meta 标签 -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap 的 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+  <title>Hello, world!</title>
+
+  <style>
+    .red {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Hello, world!</h1>
+  <div id="app" style="padding: 1%;">
+    <div>
+      <form class="form-inline">
+        <div class="form-group mx-sm-3 mb-2">
+          <label for="inputName" class="sr-only">物品名称</label>
+          <input type="text" class="form-control" v-model.trim="inputName" placeholder="物品名称">
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+          <label for="inputPrice" class="sr-only">物品价格</label>
+          <input type="number" class="form-control" v-model.number="inputPrice" placeholder="物品价格">
+        </div>
+        <button class="btn btn-primary mb-2" @click.prevent="add">添加物品</button>
+      </form>
+    </div>
+
+
+    <div v-if="list!==[]">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">编号</th>
+            <th scope="col">物品名称</th>
+            <th scope="col">物品价格</th>
+            <th scope="col">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item,index) in list">
+            <th scope="row">{{index+1}}</th>
+            <td>{{item.name}}</td>
+            <td :class="{red: item.price > 200}">{{item.price}}</td>
+            <td><a @click.prevent="del(item.id)" href="#">删除</a></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>消费总计：{{ totalPrice }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div v-else>
+      <div class="jumbotron">
+        <h1 class="display-4">没东西</h1>
+        <p class="lead">没数据</p>
+        <hr class="my-4">
+        <p>没爬到</p>
+        <a class="btn btn-primary btn-lg" href="#" role="button">没有货</a>
+      </div>
+    </div>
+    <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+    <div id="main" style="width: 600px;height:400px;text-align: center;"></div>
+  </div>
+
+
+  <script src="echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
+  <script>
+    const app = new Vue({
+      el: "#app",
+      data: {
+        list: [],
+        inputName: '',
+        inputPrice: '',
+
+      },
+      async created() {
+        const res = await axios.get('https://applet-base-api-t.itheima.net/bill', {
+          params: {
+            creator: "zhanghaonan"
+          }
+        })
+        console.log(res)
+        this.list = res.data.data
+      },
+      mounted() {
+        this.myChart = echarts.init(document.querySelector('#main'));
+        option = {
+          title: {
+            text: '道具账单',
+            subtext: '请结算',
+            left: 'center'
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left'
+          },
+          series: [
+            {
+              name: 'Access From',
+              type: 'pie',
+              radius: '50%',
+              data: [
+                // { value: 1048, name: 'Search Engine' },
+                // { value: 735, name: 'Direct' },
+                // { value: 580, name: 'Email' },
+                // { value: 484, name: 'Union Ads' },
+                // { value: 300, name: 'Video Ads' }
+              ],
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        this.myChart.setOption(option);
+      },
+      computed: {
+        totalPrice() {
+          return this.list.reduce((sum, item) => sum + item.price, 0)
+        }
+      },
+      async created() {
+        // const res = await axios.get('https://applet-base-api-t.itheima.net/bill' ,{
+        //   params:{
+        //     creator:"zhanghaonan"
+        //   }
+        // })
+        // console.log(res)
+        // this.list = res.data.data
+        this.getList()
+      },
+      methods: {
+        async getList() {
+          const res = await axios.get('https://applet-base-api-t.itheima.net/bill', {
+            params: {
+              creator: "zhanghaonan"
+            }
+          })
+          console.log(res);
+          this.list = res.data.data;
+          this.myChart.setOption({
+            series: [
+            {
+              data: this.list.map(item => ({value:item.price, name:item.name}))
+            }
+          ]
+          })
+        },
+
+        async del(id) {
+          const res = await axios.delete(`https://applet-base-api-t.itheima.net/bill/${id}`,)
+          this.getList()
+        },
+        async add() {
+          const res = await axios.post(`https://applet-base-api-t.itheima.net/bill`, {
+            creator: 'zhanghaonan',
+            name: this.inputName,
+            price: this.inputPrice
+          })
+          this.getList()
+        }
+      },
+    })
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-7ymO4nGrkm372HoSbq1OY2DP4pEZnMiA+E0F3zPr+JQQtQ82gQ1HPY3QIVtztVua"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
